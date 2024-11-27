@@ -9,8 +9,8 @@ import { swaggerUi, specs } from "./swagger/swagger.js";
 import fs from "fs";
 import https from "https";
 
-const privateKey = fs.readFileSync("private-key.pem", "utf8");
-const certificate = fs.readFileSync("certificate.pem", "utf8");
+// const privateKey = fs.readFileSync("private-key.pem", "utf8");
+// const certificate = fs.readFileSync("certificate.pem", "utf8");
 
 const app = express();
 
@@ -18,19 +18,27 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 app.use("/v1/auth", authRoutes);
-app.use("/v1/patient", verifyAuth, patientRoutes);
+app.use("/v1/patient", patientRoutes);
 
 // Serve a documentação do Swagger na rota /api-docs
 app.use("/v1/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
-const server = https.createServer(
-  {
-    key: privateKey,
-    cert: certificate,
-  },
-  app
-);
+app.get('/', (req, res) => {
+  res.send('API de prontuários médicos');
+});
 
-server.listen(3000, () => {
-  console.log(chalk.yellow("API is running on https://localhost:3000"));
+// const server = https.createServer(
+//   {
+//     key: privateKey,
+//     cert: certificate,
+//   },
+//   app
+// );
+
+// server.listen(3000, () => {
+//   console.log(chalk.yellow("API is running on https://localhost:3000"));
+// });
+
+app.listen(3000, () => {
+  console.log(chalk.yellow("API is running on http://localhost:3000"));
 });
