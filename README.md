@@ -46,8 +46,16 @@ Para rodar a API SOAP, siga os passos abaixo:
 4. **Iniciar os serviços**:
    - Abra o painel de controle do XAMPP e inicie os serviços do **Apache** e **MySQL**.
 
-5. **Acessar o projeto**:
-   - No navegador, acesse o sistema da clínica através do seguinte endereço:
+5. **Configurar o banco de dados**:
+   - No navegador, acesse o **phpMyAdmin** através do endereço:
+     ```bash
+     http://localhost/phpmyadmin/
+     ```
+   - Crie a base de dados chamada `clinixhealth`.
+   - Importe o arquivo `clinixhealth.sql` localizado na pasta do projeto para a base de dados criada.
+
+6. **Acessar o projeto**:
+   - Acesse o sistema da clínica no navegador através do seguinte endereço:
      ```bash
      http://localhost/sistema-da-clinica/
      ```

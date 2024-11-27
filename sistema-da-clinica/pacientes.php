@@ -129,7 +129,7 @@ $result = $conn->query($sql);
                         echo "<td class='px-4 py-3'>" . $row['cpf'] . "</td>";
                         echo "<td class='px-4 py-3'>" . $row['data_nascimento'] . "</td>";
                         echo "<td class='px-4 py-3'>" . $row['telefone'] . "</td>";
-                        echo "<td class='px-4 py-3'> <a href='/clinixhealth/prontuario.php?id=".$row['id']."' class='hover:underline text-blue-500'>Ver prontuário</a> </td>";
+                        echo "<td class='px-4 py-3'> <a href='/sistema-da-clinica/prontuario.php?id=".$row['id']."' class='hover:underline text-blue-500'>Ver prontuário</a> </td>";
                         echo "</tr>";
                     }
                 }

@@ -437,7 +437,7 @@
         <ul class="space-y-2">
           <li>
             <a
-              href="/clinixhealth/atendimento.php"
+              href="/sistema-da-clinica/atendimento.php"
               id="atendimento"
               class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg aa-:text-white hover:bg-gray-100 aa-:hover:bg-gray-700 group">
 
@@ -455,7 +455,7 @@
           </li>
           <li>
             <a
-              href="/clinixhealth/pacientes.php"
+              href="/sistema-da-clinica/pacientes.php"
               id="pacientes"
               class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg aa-:text-white hover:bg-gray-100 aa-:hover:bg-gray-700 group">
 
@@ -481,9 +481,9 @@
 
         const url = window.location.pathname;
 
-        if (url == '/clinixhealth/pacientes.php' || url.includes('prontuario.php')) {
+        if (url == '/sistema-da-clinica/pacientes.php' || url.includes('prontuario.php')) {
           pacientes.classList.add('bg-gray-100');
-        } else if (url == '/clinixhealth/atendimento.php') {
+        } else if (url == '/sistema-da-clinica/atendimento.php') {
           atendimento.classList.add('bg-gray-100');
         }
       </script>
