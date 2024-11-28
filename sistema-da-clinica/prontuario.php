@@ -26,6 +26,67 @@ if (isset($_GET['id'])) {
     echo "ID não fornecido.";
     exit;
 }
+
+
+// URL do serviço SOAP
+$url = "http://localhost:8080/soap-paciente";
+
+// Corpo da requisição SOAP (XML)
+$xml = <<<XML
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://www.example.com/soap">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <web:getMedicalRecord>
+            <patientCpf>{$rowPaciente['cpf']}</patientCpf>
+        </web:getMedicalRecord>
+    </soapenv:Body>
+</soapenv:Envelope>
+XML;
+
+// Inicializando o cURL
+$ch = curl_init();
+
+// Configurando a requisição cURL
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Retorna a resposta ao invés de exibir
+curl_setopt($ch, CURLOPT_POST, true); // Método POST
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Content-Type: text/xml', // Tipo de conteúdo é XML
+    'SOAPAction: "http://www.example.com/soap/getMedicalRecord"' // Definindo a SOAPAction, se necessário
+]);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $xml); // Enviando o XML no corpo da requisição
+
+// Executando a requisição e obtendo a resposta
+$response = curl_exec($ch);
+
+// Verificando se houve erro
+if (curl_errno($ch)) {
+    echo "Erro cURL: " . curl_error($ch);
+} else if ($response) {
+    // Supondo que o XML foi carregado corretamente na variável $response
+    $xml = simplexml_load_string($response);
+
+    // Função para exibir valores de objetos do XML
+    function exibir_dados($object)
+    {
+        return (string) $object;
+    }
+
+    // Extraindo os dados do XML
+    $id_paciente = exibir_dados($xml->object->object[0]); // id_paciente
+    $nome = exibir_dados($xml->object->object[1]); // nome
+    $data_nascimento = exibir_dados($xml->object->object[2]); // data_nascimento
+    $cpf = exibir_dados($xml->object->object[3]); // cpf
+    $email = exibir_dados($xml->object->object[4]); // email
+
+    // Extraindo exames
+    $exames = $xml->object->object[5]->object;
+    $prescricoes = $xml->object->object[6]->object;
+    $diagnosticos = $xml->object->object[7]->object;
+}
+
+// Fechando a conexão cURL
+curl_close($ch);
 ?>
 
 <h1 class="font-bold text-xl">Prontuário de <span class="underline text-blue-800"><?php echo $rowPaciente['nome']; ?></span></h1>
@@ -49,7 +110,6 @@ if (isset($_GET['id'])) {
         <p><span class="font-bold">Data de Nascimento:</span> <?php echo $rowPaciente['data_nascimento']; ?></p>
         <p><span class="font-bold">CPF:</span> <?php echo $rowPaciente['cpf']; ?></p>
         <p><span class="font-bold">Telefone:</span> <?php echo $rowPaciente['telefone']; ?></p>
-        <p><span class="font-bold">E-mail:</span> <?php echo $rowPaciente['email']; ?></p>
     </div>
 
 
@@ -179,4 +239,9 @@ if (isset($_GET['id'])) {
             </table>
         </div>
     </div>
-</div>
+
+    <?php 
+        if($response) {
+            include 'components/dadosApi.php';
+        }
+    ?>
