@@ -16,10 +16,37 @@ public class Main {
             public void configure() throws Exception {
                 // Rota para escutar requisição SOAP via HTTP
                 from("jetty://http://localhost:8080/soap-paciente")
+                    // Converte o corpo para String para garantir a leitura
+                    .convertBodyTo(String.class)
+                    // Extrai o patientCpf manualmente
+                    .process(exchange -> {
+                        String body = exchange.getIn().getBody(String.class);
+
+                        // Extrai o conteúdo entre as tags <patientCpf> e </patientCpf>
+                        String startTag = "<patientCpf>";
+                        String endTag = "</patientCpf>";
+                        String patientCpf = null;
+
+                        if (body.contains(startTag) && body.contains(endTag)) {
+                            int startIndex = body.indexOf(startTag) + startTag.length();
+                            int endIndex = body.indexOf(endTag);
+                            patientCpf = body.substring(startIndex, endIndex).trim();
+                        }
+
+                        // Exibe o CPF no console
+                        if (patientCpf != null) {
+                            exchange.getIn().setHeader("patientCpf", patientCpf);
+                        }
+                    })
                     .log("Recebendo requisição SOAP: ${body}")
+                    .setHeader(Exchange.HTTP_URI, simple("http://localhost:3000/v1/patient/medical-record?patientCpf=${header.patientCpf}"))
+                    // Define o método HTTP como GET
                     .setHeader(Exchange.HTTP_METHOD, constant("GET"))
-                    .to("http://localhost:3000/?bridgeEndpoint=true")
-                    .log("Resposta: ${body}");
+                    // Envia a requisição para o serviço externo
+                    .to("http://localhost:3000")
+                    // Log para verificar a resposta
+                    .to("xj:identity?transformDirection=JSON2XML")
+                    .log("${body}");
             }
         });
 
