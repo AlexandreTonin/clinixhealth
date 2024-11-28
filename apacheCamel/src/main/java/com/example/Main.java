@@ -19,6 +19,13 @@ public class Main {
                     // Converte o corpo para String para garantir a leitura
                     .convertBodyTo(String.class)
                     // Extrai o patientCpf manualmente
+                    .log("Requisição SOAP (xml) recebida")
+                    .log("ㅤ")
+                    .log("--------------------------------------------")
+                    .log("${body}")
+                    .log("--------------------------------------------")
+                    .log("ㅤ")
+                    .log("Processando XML (extraindo o cpf do paciente)")
                     .process(exchange -> {
                         String body = exchange.getIn().getBody(String.class);
 
@@ -38,15 +45,29 @@ public class Main {
                             exchange.getIn().setHeader("patientCpf", patientCpf);
                         }
                     })
-                    .log("Recebendo requisição SOAP: ${body}")
+                    .log("CPF extraido do xml: ${header.patientCpf}")
+                    .log("Enviando requisicao para o servico externo")
                     .setHeader(Exchange.HTTP_URI, simple("http://localhost:3000/v1/patient/medical-record?patientCpf=${header.patientCpf}"))
                     // Define o método HTTP como GET
                     .setHeader(Exchange.HTTP_METHOD, constant("GET"))
                     // Envia a requisição para o serviço externo
                     .to("http://localhost:3000")
                     // Log para verificar a resposta
+                    .log("resposta do servico externo foi recebida com sucesso")
+                    .log("ㅤ")
+                    .log("--------------------------------------------")
+                    .log("${body}")
+                    .log("--------------------------------------------")
+                    .log("ㅤ")
+                    .log("transformando resposta do servico externo (json) para xml")
                     .to("xj:identity?transformDirection=JSON2XML")
-                    .log("${body}");
+                    .log("resposta transformada com sucesso")
+                    .log("ㅤ")
+                    .log("--------------------------------------------")
+                    .log("${body}")
+                    .log("--------------------------------------------")
+                    .log("ㅤ");
+
             }
         });
 
