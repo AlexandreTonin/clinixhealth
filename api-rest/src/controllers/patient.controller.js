@@ -7,7 +7,7 @@ export class PatientController {
     try {
       const patient = PatientModel.getPatientByCpf(patientCpf);
 
-      if (!patient) {
+      if (!patient || Object.keys(patient).length === 0) {
         return res.status(404).json({ message: "Patient not found" });
       }
 
